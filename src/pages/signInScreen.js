@@ -7,24 +7,42 @@ import {
     InputGroup,
     Flex,
     InputRightElement,
-    Alert,
+    useToast,
 } from '@chakra-ui/react';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 import SignUp from '../components/signUp';
+import { auth } from '../firebase';
 
 /**
  * SignIn 
+ * @param {function} setUser - flag for user login
  * @returns screen for user to sign in
  */
 
-const SignIn = () => {
+const SignIn = ({ setUser }) => {
     const [ show, setShow ] = useState();
-    const [ username, setUsername ] = useState('');
+    const [ email, setEmail ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ open, setOpen ] = useState(false);
+    const toast = useToast();
 
     const signIn = () => {
-        console.log(username);
+        console.log(email);
         console.log(password);
+        signInWithEmailAndPassword(auth, email, password).then(() => {
+            setUser(true);
+        }).catch(error => {
+            console.error("error signing in with email and password", error);
+            toast({
+                title: "Invalid Login",
+                description: "Email or password incorrect",
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+
+            });
+            setPassword('');
+        });
     };
 
     const signUp = () => {
@@ -35,9 +53,19 @@ const SignIn = () => {
     return(
         <Flex base='shadow' direction='column' alignItems='center' justifyContent='center'>
             <Heading as='h1' style={{marginTop: '50px'}}>Tune Wrangler</Heading>
-            <Input onChange={(e) => setUsername(e.target.value)} width='30vw' placeholder='username' style={{marginTop: '20px', marginBottom: '5px'}}></Input>
+            <Input
+                onChange={(e) => setEmail(e.target.value)}
+                width='30vw' placeholder='email address'
+                style={{marginTop: '20px', marginBottom: '5px'}}
+                isRequired
+            ></Input>
             <InputGroup width='30vw' style={{marginTop: '10px', marginBottom: '10px'}}>
-                <Input onChange={(e) => setPassword(e.target.value)} placeholder='password' type={show ? 'text' : 'password'}></Input>
+                <Input
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder='password'
+                    type={show ? 'text' : 'password'}
+                    isRequired={true}
+                ></Input>
                 <InputRightElement width='5vw'>
                     <Button onClick={() => setShow(!show)}>{show ? 'Hide' : 'Show'}</Button>
                 </InputRightElement>
@@ -47,7 +75,7 @@ const SignIn = () => {
                 <Button onClick={signIn} >Sign In</Button>
             </Flex>
             <Button onClick={signUp} >Sign Up</Button>
-            <SignUp open={open} setOpen={setOpen} />
+            <SignUp open={open} setOpen={setOpen} setUser={setUser}/>
         </Flex>
     );
 };

@@ -13,16 +13,19 @@ import {
     Flex,
     Button,
 } from '@chakra-ui/react';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebase';
 
 /**
  * SignUp
  * @param {boolean} open - if the modal is open or not
  * @param {function} setOpen - sets open value of modal 
+ * @param {function} setUser - flag for user login
  * @returns Modal that allows user to create an account
  */
 
-const SignUp = ({open, setOpen}) => {
-    const [ username, setUsername ] = useState('');
+const SignUp = ({open, setOpen, setUser}) => {
+    const [ email, setEmail ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ show, setShow ] = useState(true);
 
@@ -31,8 +34,18 @@ const SignUp = ({open, setOpen}) => {
     };
 
     const handleSubmit = () => {
-        console.log("submitted");
-    }
+        console.log(email);
+        console.log(password);
+        try{
+            createUserWithEmailAndPassword(auth, email, password);
+        }catch(error){
+            console.error('Error with creating email and password');
+        }
+        setEmail('');
+        setPassword('');
+        setUser(true);
+        handleClose();
+    };
 
     return(
         <Modal isOpen={open} onClose={handleClose}>
@@ -43,7 +56,7 @@ const SignUp = ({open, setOpen}) => {
                 </ModalHeader>
 
                 <ModalBody>
-                    <Input onChange={(e) => setUsername(e.target.value)} placeholder="email address"/>
+                    <Input onChange={(e) => setEmail(e.target.value)} placeholder="email address"/>
                     <InputGroup>
                     <Input onChange={(e) => setPassword(e.target.value)} placeholder="password" type={show ? "text" : "password"}/>
                     <InputRightElement>

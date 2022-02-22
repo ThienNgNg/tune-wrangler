@@ -1,4 +1,6 @@
-import firebase  from 'firebase/app';
+import { initializeApp } from 'firebase/app';
+import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBRY7_SiPC58lv0Cr_ET67pBHU8UD5O_Kg",
@@ -10,57 +12,6 @@ const firebaseConfig = {
   measurementId: "G-DVVHKN9NP8"
 };
 
-firebase.initializeApp(firebaseConfig);
-
-export const auth = firebase.auth();
-export const db = firebase.firestore();
-
-//Sign in with Google
-const provider = new firebase.auth.GoogleAuthProvider();
-export const signInWithGoogle = () => {
-    auth.signInWithPopup(provider);
-};
-
-export const generateUserDocument = async (user, additionalData) => { //TODO: fix n shit user stuff
-    if(!user){
-        return;
-    }
-  
-    const userRef = db.doc(`users/${user.uid}`);
-    const snapshot = await userRef.get();
-  
-    if(!snapshot.exists){
-      const { email } = user;
-      try{
-        await userRef.set({
-          email,
-          ...additionalData
-        });
-      } catch (error) {
-        console.error("Error creating user document", error);
-      }
-    }
-    return getUserDocument(user.uid);
-  };
-
-const getUserDocument = async uid => {
-    if(!uid){
-        return null;
-    }
-
-    try{
-        const userDocument = await db.doc(`users/${uid}`).get();
-
-        return{
-            uid,
-            ...userDocument.data()
-        };
-    }catch(error){
-        console.error("Error fetching user", error);
-    }
-};
-
-export const signOut = () => {
-    auth.signOut();
-    console.log('user signed out');
-};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+export const auth = getAuth();
