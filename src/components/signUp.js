@@ -28,6 +28,7 @@ const SignUp = ({open, setOpen, setUser}) => {
     const [ email, setEmail ] = useState('');
     const [ password, setPassword ] = useState('');
     const [ show, setShow ] = useState(true);
+    const [ genreHolder, setGenreHolder ] = useState([]);
 
     const handleClose = () => {
         setOpen(false);
@@ -36,16 +37,30 @@ const SignUp = ({open, setOpen, setUser}) => {
     const handleSubmit = () => {
         console.log(email);
         console.log(password);
-        try{
-            createUserWithEmailAndPassword(auth, email, password);
-        }catch(error){
+        console.log(genreHolder);
+        createUserWithEmailAndPassword(auth, email, password).then(() => {
+            setEmail('');
+            setPassword('');
+            setUser(true);
+            handleClose();
+        }).catch((error) => {
             console.error('Error with creating email and password');
-        }
-        setEmail('');
-        setPassword('');
-        setUser(true);
-        handleClose();
+        });
     };
+
+    const selectGenre = (e) => {
+        const genre = e.value;
+        console.log(genre);
+        if(genreHolder.includes(genre)){
+            e.style.backgroundColor = "white";
+            e.style.color = "black";
+            genreHolder.splice(genreHolder.indexOf(genre), 1)
+        }else{
+            e.style.backgroundColor = "black";
+            e.style.color = "white";
+            genreHolder.push(genre);
+        }
+    }
 
     return(
         <Modal isOpen={open} onClose={handleClose}>
@@ -56,13 +71,25 @@ const SignUp = ({open, setOpen, setUser}) => {
                 </ModalHeader>
 
                 <ModalBody>
-                    <Input onChange={(e) => setEmail(e.target.value)} placeholder="email address"/>
+                    <Input onChange={(e) => setEmail(e.target.value)} placeholder="email address" style={{marginBottom: '10px'}}/>
+
                     <InputGroup>
-                    <Input onChange={(e) => setPassword(e.target.value)} placeholder="password" type={show ? "text" : "password"}/>
-                    <InputRightElement>
-                        <Button onClick={() => setShow(!show)}>{show ? "Hide" : "Show"}</Button>
-                    </InputRightElement>
-                </InputGroup>
+                        <Input onChange={(e) => setPassword(e.target.value)} placeholder="password" type={show ? "text" : "password"}/>
+                        <InputRightElement width='5vw'>
+                            <Button onClick={() => setShow(!show)}>{show ? "Hide" : "Show"}</Button>
+                        </InputRightElement>
+                    </InputGroup>
+
+                    <Flex direction="row" alignItems='center' justifyContent='space-around' style={{margin: '10px'}}>
+                        <Button onClick={(e) => selectGenre(e.target)} border='1px' borderRadius='12px' value="Rock" >Rock</Button>
+                        <Button onClick={(e) => selectGenre(e.target)} border='1px' borderRadius='12px' value="Pop" >Pop</Button>
+                        <Button onClick={(e) => selectGenre(e.target)} border='1px' borderRadius='12px' value="Hip hop" >Hip hop</Button>
+                    </Flex>
+
+                    <Flex direction="row" alignItems='center' justifyContent='space-around' style={{margin: '10px'}}>
+                        <Button onClick={(e) => selectGenre(e.target)} border='1px' borderRadius='12px' value="Country" >Country</Button>
+                        <Button onClick={(e) => selectGenre(e.target)} border='1px' borderRadius='12px' value="EDM" >EDM</Button>
+                    </Flex>
                 </ModalBody>
 
                 <ModalFooter>
