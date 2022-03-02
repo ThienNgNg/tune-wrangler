@@ -59,6 +59,7 @@ const SignIn = ({ setUser }) => {
                 style={{marginTop: '20px', marginBottom: '5px'}}
                 isRequired
             ></Input>
+            />
             <InputGroup width='30vw' style={{marginTop: '10px', marginBottom: '10px'}}>
                 <Input
                     onChange={(e) => setPassword(e.target.value)}
@@ -66,6 +67,7 @@ const SignIn = ({ setUser }) => {
                     type={show ? 'text' : 'password'}
                     isRequired={true}
                 ></Input>
+                />
                 <InputRightElement width='5vw'>
                     <Button onClick={() => setShow(!show)}>{show ? 'Hide' : 'Show'}</Button>
                 </InputRightElement>
@@ -73,8 +75,10 @@ const SignIn = ({ setUser }) => {
             <Flex direction='row' justifyContent='space-around' width='30vw'>
                 <Button >Sign in with Google</Button>
                 <Button onClick={signIn} >Sign In</Button>
+                <Button onClick={signUp} >Sign Up</Button>
             </Flex>
             <Button onClick={signUp} >Sign Up</Button>
+            <Button onClick={() => setUser(true)}>Sign in manually</Button>
             <SignUp open={open} setOpen={setOpen} setUser={setUser}/>
         </Flex>
     );
