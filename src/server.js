@@ -237,6 +237,13 @@ function getTop50 (){
   })
 }
 
+app.get("/genre",function(req,res){
+  getGenres();
+  message = {};
+  message.genre = genres;
+  console.log(message)
+  res.status(200).json(message)
+})
 
 app.post("/signup", function(req, res){
 
