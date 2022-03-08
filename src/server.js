@@ -86,6 +86,41 @@ console.log("Done init")
 //     console.log('ERR GETTING SPOTIFY ACCESS TOKEN', err);
 //   })
 // }
+console.log(token)
+console.log("Getting Spotify Token...\n")
+
+function getToken (){
+  //the client_id and secret will be put in the file not here
+  var client_id = '9b2a4621bd7c41daa046f4000ec14367'; // Your client id
+  var client_secret = '5b2177289d6b4fd1bd5e34d2106eac41'; // Your secret
+  axios({
+      url : 'https://accounts.spotify.com/api/token',
+      method: 'POST',
+      headers: {
+          'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64')),
+          'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      params:{
+          grant_type: 'client_credentials'
+      },
+      json: true
+    })
+    .then (function(response){
+        token = response.data.access_token;
+        console.log(token);
+        //get genres
+        getGenres();
+
+    })
+    .catch(function(error){
+        console.log(error);
+    })
+  }
+
+getToken()
+console.log("Received Token")
+
+
 
 
 app.use(express.static("public"));
@@ -161,6 +196,91 @@ function spotifyAPI(){
   console.log("send request")
 }
 
+let genres;
+function getGenres (){
+    console.log("Getting Genre....\n");
+    //while loop just use for testing
+      axios({
+          url: 'https://api.spotify.com/v1/recommendations/available-genre-seeds',
+          method: 'get',
+          headers: {
+              'Accept': 'application/json',
+              'Authorization': 'Bearer ' + token,
+              'Content-Type': 'application/json'
+          },
+          json: true
+      })
+      .then(function(response){
+        //console.log(response)
+        genres = response.data.genres
+        console.log(genres)
+        console.log(typeof(genres))
+
+      }).catch(function(error){
+        console.log(error)
+      })
+}
+
+
+function getArtists(){
+  console.log("Getting Artists");
+  axios({
+    url : 'https://api.spotify.com/v1/',
+    method: 'GET',
+    headers: {
+        'Authorization': 'Bearer ' + token
+    },
+    json: true
+  })
+  .then (function(response){
+      console.log(response);
+
+  })
+  .catch(function(error){
+      console.log(error);
+  })
+
+}
+let listOfArtists = new Object();
+function getTop50 (){
+  let playlist_id = '37i9dQZEVXbMDoHDwVN2tF'
+  axios({
+      url: `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      json: true
+  }).then(function(response){
+      if(response.status === 200){
+          return response.data
+      }
+
+  }).then(function(data){
+      items = data.items
+      console.log(items)
+      console.log("Enter the loop")
+      for (let i = 0; i< 50; i++){
+          console.log(items[i])
+          name = items[i].track.artists[0].name
+          id = items[i].track.artists[0].id
+          listOfArtists[`${name}`] = id
+      }
+      console.log(listOfArtists)
+  }).catch(function(error){
+      console.log(error)
+  })
+}
+
+app.get("/genre",function(req,res){
+  getGenres();
+  message = {};
+  message.genre = genres;
+  console.log(message)
+  res.status(200).json(message)
+})
 
 app.post("/signup", function(req, res){
 
@@ -186,6 +306,7 @@ app.post("/signup", function(req, res){
                         //send a get request to Spotify API to get the top 50 artists and their genres
 
 
+                        getTop50();
                     }
                     else{
                         genre = references.genres

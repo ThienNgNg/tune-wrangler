@@ -37,6 +37,9 @@ const SignUp = ({open, setOpen, setUser}) => {
     const handleSubmit = () => {
         console.log(email);
         console.log(password);
+        try{
+            createUserWithEmailAndPassword(auth, email, password);
+        }catch(error){
         console.log(genreHolder);
         createUserWithEmailAndPassword(auth, email, password).then(() => {
             setEmail('');
@@ -45,6 +48,11 @@ const SignUp = ({open, setOpen, setUser}) => {
             handleClose();
         }).catch((error) => {
             console.error('Error with creating email and password');
+        }
+        setEmail('');
+        setPassword('');
+        setUser(true);
+        handleClose();
         });
     };
 
@@ -71,9 +79,15 @@ const SignUp = ({open, setOpen, setUser}) => {
                 </ModalHeader>
 
                 <ModalBody>
+                    <Input onChange={(e) => setEmail(e.target.value)} placeholder="email address"/>
                     <Input onChange={(e) => setEmail(e.target.value)} placeholder="email address" style={{marginBottom: '10px'}}/>
 
                     <InputGroup>
+                    <Input onChange={(e) => setPassword(e.target.value)} placeholder="password" type={show ? "text" : "password"}/>
+                    <InputRightElement>
+                        <Button onClick={() => setShow(!show)}>{show ? "Hide" : "Show"}</Button>
+                    </InputRightElement>
+                </InputGroup>
                         <Input onChange={(e) => setPassword(e.target.value)} placeholder="password" type={show ? "text" : "password"}/>
                         <InputRightElement width='5vw'>
                             <Button onClick={() => setShow(!show)}>{show ? "Hide" : "Show"}</Button>
