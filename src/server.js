@@ -29,38 +29,6 @@ function getToken (){
   //the client_id and secret will be put in the file not here
   var client_id = '9b2a4621bd7c41daa046f4000ec14367'; // Your client id
   var client_secret = '5b2177289d6b4fd1bd5e34d2106eac41'; // Your secret
-
-    url: 'https://accounts.spotify.com/api/token',
-    headers: {
-      'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64')),
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    form: {
-      grant_type: 'client_credentials'
-    },
-    json: true
-  };
-
-
-  request.post(authOptions, function(error, response, body) {
-    if (!error && response.statusCode === 200) {
-
-      // use the access token to access the Spotify Web API
-      token = body.access_token;
-      console.log(`\nToken: ${token}\n`);
-      var options = {
-        url: 'https://api.spotify.com/v1/users/joegal513',
-        headers: {
-          'Authorization': 'Bearer ' + token
-        },
-        json: true
-      };
-      console.log(token);
-      request.get(options, function(error, response, body) {
-        //console.log(body);
-      });
-    }
-  });
   axios({
       url : 'https://accounts.spotify.com/api/token',
       method: 'POST',
