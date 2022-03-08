@@ -22,46 +22,37 @@ pool.connect().then(function () {
 });
 
 let token;
-console.log("start init")
+console.log(token)
+console.log("Getting Spotify Token...\n")
+
 function getToken (){
+  //the client_id and secret will be put in the file not here
   var client_id = '9b2a4621bd7c41daa046f4000ec14367'; // Your client id
   var client_secret = '5b2177289d6b4fd1bd5e34d2106eac41'; // Your secret
 
-  // your application requests authorization
-  var authOptions = {
-    url: 'https://accounts.spotify.com/api/token',
-    headers: {
-      'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64')),
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    form: {
-      grant_type: 'client_credentials'
-    },
-    json: true
-  };
+  axios({
+      url : 'https://accounts.spotify.com/api/token',
+      method: 'POST',
+      headers: {
+          'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64')),
+          'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      params:{
+          grant_type: 'client_credentials'
+      },
+      json: true
+    })
+    .then (function(response){
+        token = response.data.access_token;
+        console.log(token);
+        //get genres
+        getGenres();
 
-
-  request.post(authOptions, function(error, response, body) {
-    if (!error && response.statusCode === 200) {
-
-      // use the access token to access the Spotify Web API
-      token = body.access_token;
-      console.log(`\nToken: ${token}\n`);
-      var options = {
-        url: 'https://api.spotify.com/v1/users/joegal513',
-        headers: {
-          'Authorization': 'Bearer ' + token
-        },
-        json: true
-      };
-      console.log(token);
-      request.get(options, function(error, response, body) {
-        //console.log(body);
-      });
-    }
-  });
-
-}
+    })
+    .catch(function(error){
+        console.log(error);
+    })
+  }
 
 getToken()
 console.log("Done init")
@@ -159,6 +150,36 @@ app.use(express.json());
 
 function spotifyAPI(){
   console.log("send request")
+function getTop50 (){
+  let playlist_id = '37i9dQZEVXbMDoHDwVN2tF'
+  axios({
+      url: `https://api.spotify.com/v1/playlists/${playlist_id}/tracks`,
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      },
+      json: true
+  }).then(function(response){
+      if(response.status === 200){
+          return response.data
+      }
+
+  }).then(function(data){
+      items = data.items
+      console.log(items)
+      console.log("Enter the loop")
+      for (let i = 0; i< 50; i++){
+          console.log(items[i])
+          name = items[i].track.artists[0].name
+          id = items[i].track.artists[0].id
+          listOfArtists[`${name}`] = id
+      }
+      console.log(listOfArtists)
+  }).catch(function(error){
+      console.log(error)
+  })
 }
 
 
@@ -184,8 +205,7 @@ app.post("/signup", function(req, res){
                     let artists = []
                     if(references === "none"){
                         //send a get request to Spotify API to get the top 50 artists and their genres
-
-
+                        getTop50();
                     }
                     else{
                         genre = references.genres
@@ -213,9 +233,6 @@ app.post("/signup", function(req, res){
         })
 
 })
-
-
-
 
 app.listen(port, hostname, () => {
     console.log(`Listening at: http://${hostname}:${port}`);
