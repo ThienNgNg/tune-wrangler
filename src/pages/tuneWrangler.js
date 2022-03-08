@@ -3,8 +3,13 @@ import {
     Text,
     Button,
     Flex,
+    Drawer,
+    Divider,
+    IconButton,
 } from '@chakra-ui/react';
-import { signOut } from 'firebase/auth';
+import { SettingsIcon } from '@chakra-ui/icons';
+import SearchBar from '../components/searchBar';
+import Settings from '../components/settings';
 import { auth } from '../firebase';
 
 /**
@@ -12,21 +17,11 @@ import { auth } from '../firebase';
  * @param {function} setUser - flag for user login
  * @returns main screen that shows map, allows for searching, and shows concert/artist details
  */
-const TuneWrangler = ({ setUser }) => {
 
-    const exit = () => {
-        signOut(auth).then(() => {
-            console.log("Signed out");
-            setUser(false);
-        })
-    };
 const TuneWrangler = ({ setUser }) => {
     const [ settingsOpen, setSettingsOpen ] = useState(false);
 
     return(
-        <Flex base='shadow' direction='column' alignItems='center' justifyContent='center'>
-        <Text>test</Text>
-        <Button onClick={exit}>Sign Out</Button>
         <Flex base='shadow' direction='row' justifyContent='center' height={window.innerHeight} width={window.innerWidth}>
             <SearchBar />
             <Divider orientation='vertical' />

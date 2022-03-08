@@ -23,16 +23,6 @@ const SearchBar = () => {
     const recent = ["Rock", "Billie Eyelash", "Philadelphia", "19104", "Philly"];
     const ref = useRef(null);
 
-    // useEffect(() => {
-    //     console.log("called");
-    //     if(val.length > 0 || document.activeElement == ref.current){
-    //         console.log(document.activeElement);
-    //         setOpen(true);
-    //     }else{
-    //         setOpen(false);
-    //     }
-    // });
-
     useEffect(() => {
         function handleClick(event){
             if (ref.current && !ref.current.contains(event.target)) {
@@ -71,4 +61,4 @@ const SearchBar = () => {
     );
 };
 
-export default SearchBar
+export default SearchBar 
