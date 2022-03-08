@@ -95,14 +95,27 @@ const SignUp = ({open, setOpen, setUser}) => {
                     </InputGroup>
 
                     <Flex direction="row" alignItems='center' justifyContent='space-around' style={{margin: '10px'}}>
-                        <Button onClick={(e) => selectGenre(e.target)} border='1px' borderRadius='12px' value="Rock" >Rock</Button>
-                        <Button onClick={(e) => selectGenre(e.target)} border='1px' borderRadius='12px' value="Pop" >Pop</Button>
-                        <Button onClick={(e) => selectGenre(e.target)} border='1px' borderRadius='12px' value="Hip hop" >Hip hop</Button>
+                        {["Rock", "Pop", "Hip-Hop"].map((val) => 
+                            <Button
+                                onClick={(e) => selectGenre(e.target)}
+                                border='1px'
+                                borderRadius='12px'
+                                value={val}
+                                style={{backgroundColor: "white"}}
+                            >{val}</Button>
+                        )}
                     </Flex>
 
                     <Flex direction="row" alignItems='center' justifyContent='space-around' style={{margin: '10px'}}>
-                        <Button onClick={(e) => selectGenre(e.target)} border='1px' borderRadius='12px' value="Country" >Country</Button>
-                        <Button onClick={(e) => selectGenre(e.target)} border='1px' borderRadius='12px' value="EDM" >EDM</Button>
+                        {["Country", "EDM"].map((val) => 
+                            <Button
+                                onClick={(e) => selectGenre(e.target)}
+                                border='1px'
+                                borderRadius='12px'
+                                value={val}
+                                style={{backgroundColor: "white"}}
+                            >{val}</Button>
+                        )}
                     </Flex>
                 </ModalBody>
 
